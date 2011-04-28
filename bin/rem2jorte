@@ -6,7 +6,18 @@ require 'polyglot'
 require 'treetop'
 require 'remparser'
 
-#CSV.read('test/schedule_data.csv')
+# A simple script converting the output of 'remind -s' to Jorte's CSV format for
+# easy import. Jorte is a replacement for the default Android calendar. It reads
+# all its input from STDIN and writes to STDOUT. For Jorte to recognize the
+# data, it should be saved as 'schedule_data.csv' or 'schedule_add_data.csv',
+# depending on how you want to import (overwriting vs. adding data).
+#
+# This software is licensed under the Creative
+# Commons CC0 1.0 Universal License.
+# To view a copy of this license, visit
+# http://creativecommons.org/publicdomain/zero/1.0/legalcode
+#
+# @author Patrick Hof
 
 parser = RemindParser.new
 
