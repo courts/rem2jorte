@@ -23,17 +23,17 @@ require 'remparser'
 # @author Patrick Hof
 
 $options = {
-  :comment => nil,
-  :backwards => false
+  :tag => nil,
+  :reverse=> false
 }
 OptionParser.new do |opts|
   opts.banner = "Usage: #{__FILE__} [options] < $STDIN"
   opts.separator ""
-  opts.on("-c", "--comment CMT", "Add a comment CMT to the 'content' field (e.g. to show that the entry was imported from remind)") do |c|
-    $options[:comment] = c
+  opts.on("-t", "--tag Tag", "Add a tag TAG to either the 'content' field of a Jorte entry or as a TAG to a remind entry when in reverse mode") do |t|
+    $options[:tag] = t
   end
-  opts.on("-b", "--backwards", "Convert from Jorte to Remind (not implemented yet)") do
-    $options[:backwards] = true
+  opts.on("-r", "--reverse", "Convert from Jorte to Remind") do
+    $options[:reverse] = true
   end 
   opts.on("-h", "--help", "Show this help") do
     puts opts
@@ -64,7 +64,7 @@ def rem2jorte()
         row << nil
       end
       row << res[:body][:text]
-      row << $options[:comment]
+      row << $options[:tag]
       row << nil
       3.times {row  << 0}
       csv << row
@@ -80,6 +80,9 @@ def jorte2rem()
   rem_string = ""
   csv.each do |line|
     rem = "REM"
+    if $options[:tag]
+      rem << " TAG #{$options[:tag]}"
+    end
     if line["schedule_date"]
       start_date = Date.parse(line["schedule_date"])
       rem << start_date.strftime(" %b %d %Y")
@@ -110,7 +113,7 @@ def jorte2rem()
   return rem_string
 end
 
-if $options[:backwards]
+if $options[:reverse]
   res = jorte2rem()
 else
   res = rem2jorte()
