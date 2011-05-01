@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'csv'
+require 'optparse'
 
 require 'polyglot'
 require 'treetop'
@@ -18,6 +19,21 @@ require 'remparser'
 # http://creativecommons.org/publicdomain/zero/1.0/legalcode
 #
 # @author Patrick Hof
+
+$options = {
+  :comment => nil
+}
+OptionParser.new do |opts|
+  opts.banner = "Usage: #{__FILE__} [options] < $STDIN"
+  opts.separator ""
+  opts.on("-c", "--comment CMT", "Add a comment CMT to the 'content' field (e.g. to show that the entry was imported from remind)") do |c|
+    $options[:comment] = c
+  end
+  opts.on("-h", "--help", "Show this help") do
+    puts opts
+    exit
+  end
+end.parse!
 
 parser = RemindParser.new
 
@@ -40,7 +56,8 @@ csv_string = CSV.generate(options={:headers => true}) do |csv|
       row << nil
     end
     row << res[:body][:text]
-    2.times {row << nil}
+    row << $options[:comment]
+    row << nil
     3.times {row  << 0}
     csv << row
   end
