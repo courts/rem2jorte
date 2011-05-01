@@ -2,6 +2,8 @@
 
 require 'csv'
 require 'optparse'
+require 'date'
+require 'time'
 
 require 'polyglot'
 require 'treetop'
@@ -21,7 +23,8 @@ require 'remparser'
 # @author Patrick Hof
 
 $options = {
-  :comment => nil
+  :comment => nil,
+  :backwards => false
 }
 OptionParser.new do |opts|
   opts.banner = "Usage: #{__FILE__} [options] < $STDIN"
@@ -29,38 +32,87 @@ OptionParser.new do |opts|
   opts.on("-c", "--comment CMT", "Add a comment CMT to the 'content' field (e.g. to show that the entry was imported from remind)") do |c|
     $options[:comment] = c
   end
+  opts.on("-b", "--backwards", "Convert from Jorte to Remind (not implemented yet)") do
+    $options[:backwards] = true
+  end 
   opts.on("-h", "--help", "Show this help") do
     puts opts
     exit
   end
 end.parse!
 
-parser = RemindParser.new
+# Parses the output of remind -s to Jorte CSV format
+def rem2jorte()
+  parser = RemindParser.new
 
-csv_string = CSV.generate(options={:headers => true}) do |csv|
-  csv << ["schedule_date", "start_time", "end_date", "end_time", "title", "content", "place", "importance", "status", "meridiem"]
-  $stdin.each do |line|
-    rem = parser.parse(line)
-    res = rem.content_hash
-    row = []
-    row << res[:date].strftime("%Y/%m/%d")
-    if res[:body].has_key? :time
-      row << res[:body][:time][:start]
-    else
+  csv_string = CSV.generate(options={:headers => true}) do |csv|
+    csv << ["schedule_date", "start_time", "end_date", "end_time", "title", "content", "place", "importance", "status", "meridiem"]
+    $stdin.each do |line|
+      rem = parser.parse(line)
+      res = rem.content_hash
+      row = []
+      row << res[:date].strftime("%Y/%m/%d")
+      if res[:body].has_key? :time
+        row << res[:body][:time][:start]
+      else
+        row << nil
+      end
+      row << res[:date].strftime("%Y/%m/%d")
+      if res[:body].has_key? :time
+        row << res[:body][:time][:end]
+      else
+        row << nil
+      end
+      row << res[:body][:text]
+      row << $options[:comment]
       row << nil
+      3.times {row  << 0}
+      csv << row
     end
-    row << res[:date].strftime("%Y/%m/%d")
-    if res[:body].has_key? :time
-      row << res[:body][:time][:end]
-    else
-      row << nil
-    end
-    row << res[:body][:text]
-    row << $options[:comment]
-    row << nil
-    3.times {row  << 0}
-    csv << row
   end
+
+  return csv_string
 end
 
-puts csv_string
+def jorte2rem()
+  c = $stdin.read()
+  csv = CSV.parse(c, :headers => true)
+  rem_string = ""
+  csv.each do |line|
+    rem = "REM"
+    if line["schedule_date"]
+      start_date = Date.parse(line["schedule_date"])
+      rem << start_date.strftime(" %b %d %Y")
+    end
+    if line["schedule_date"] != line["end_date"]
+      end_date = Date.parse(line["end_date"])
+      rem << end_date.strftime(" UNTIL %b %d %Y")
+    end
+
+    if line["start_time"]
+      rem << " +3"
+      rem << " AT #{line["start_time"]}"
+    end
+
+    if line["end_time"]
+      duration_minutes = ((Time.parse(line["end_time"]) - Time.parse(line["start_time"])) / 60).to_i
+      hh = duration_minutes / 60
+      mm = sprintf "%02d" % (duration_minutes % 60)
+      rem << " DURATION #{hh}:#{mm}"
+    end
+
+    rem << ' MSG %a %3 %"'
+    rem << line["title"]
+    rem << '%"%'
+
+    rem_string << rem + "\n"
+  end
+  return rem_string
+end
+
+if $options[:backwards]
+  res = jorte2rem()
+else
+  res = rem2jorte()
+end
+puts res
