@@ -74,6 +74,7 @@ def rem2jorte()
   return csv_string
 end
 
+# Parses the Jorte CSV exported file (schedule_data.csv) to remind syntax
 def jorte2rem()
   c = $stdin.read()
   csv = CSV.parse(c, :headers => true)
@@ -82,6 +83,9 @@ def jorte2rem()
     rem = "REM"
     if $options[:tag]
       rem << " TAG #{$options[:tag]}"
+    end
+    if line["importance"] != "0"
+      rem << " PRIORITY #{line["importance"].to_i * 1000  + 5000}"
     end
     if line["schedule_date"]
       start_date = Date.parse(line["schedule_date"])
@@ -106,6 +110,9 @@ def jorte2rem()
 
     rem << ' MSG %a %3 %"'
     rem << line["title"]
+    if line["place"]
+      rem << " at #{line["place"]}"
+    end
     rem << '%"%'
 
     rem_string << rem + "\n"
