@@ -7,10 +7,11 @@ License:     [CC0 1.0 Universal License](http://creativecommons.org/publicdomain
 Download:    git clone git@github.com:courts/rem2jorte.git  
 
 A simple script converting the output of 'remind -s' to Jorte's CSV format for
-easy import. Jorte is a replacement for the default Android calendar. It reads
-all its input from STDIN and writes to STDOUT. For Jorte to recognize the
-data, it should be saved as 'schedule\_data.csv' or 'schedule\_add\_data.csv',
-depending on how you want to import (overwriting vs. adding data).
+easy import. [Jorte](http://www.jorte.net/) is a replacement for the default
+Android calendar. rem2jorte reads all its input from STDIN and writes to STDOUT. For
+Jorte to recognize the data, it should be saved as 'schedule\_data.csv' or
+'schedule\_add\_data.csv', depending on how you want to import (overwriting vs.
+adding data).
 
 
 rem2jorte Command Line Usage
