@@ -16,13 +16,13 @@ depending on how you want to import (overwriting vs. adding data).
 rem2jorte Command Line Usage
 ----------------------------
 
-Usage: rem2jorte [options] < $STDIN
+    Usage: rem2jorte [options] < $STDIN
 
-    -t, --tag Tag                    Add a tag TAG to either the 'content' field
-                                     of a Jorte entry or as a TAG to a remind
-                                     entry when in reverse mode
-    -r, --reverse                    Convert from Jorte to Remind
-    -h, --help                       Show this help
+        -t, --tag Tag                    Add a tag TAG to either the 'content' field
+                                         of a Jorte entry or as a TAG to a remind
+                                         entry when in reverse mode
+        -r, --reverse                    Convert from Jorte to Remind
+        -h, --help                       Show this help
 
 
 Where $STDIN is the output of 'remind -s' or the content of an exported Jorte
@@ -40,7 +40,7 @@ Examples
 Dependencies
 ------------
 
-rem2jorte depends on my own [https://github.com/courts/remparser](remparser)
+rem2jorte depends on my own [remparser](https://github.com/courts/remparser)
 library.
 
 
