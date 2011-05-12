@@ -48,7 +48,7 @@ library.
 RubyGems
 --------
 
-A gemspec file is included, so you can build and install remparser as a gem with:
+A gemspec file is included, so you can build and install rem2jorte as a gem with:
 
     gem build rem2jorte.gemspec
     gem install rem2jorte-x.x.x.gem
