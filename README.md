@@ -4,7 +4,7 @@ rem2jorte
 Author:      Patrick Hof <courts@offensivethinking.org>  
 License:     [CC0 1.0 Universal License](http://creativecommons.org/publicdomain/zero/1.0/legalcode)
 
-Download:    git clone git@github.com:courts/rem2jorte.git  
+Download:    git clone http://github.com/courts/rem2jorte.git  
 
 A simple script converting the output of 'remind -s' to Jorte's CSV format for
 easy import. [Jorte](http://www.jorte.net/) is a replacement for the default
